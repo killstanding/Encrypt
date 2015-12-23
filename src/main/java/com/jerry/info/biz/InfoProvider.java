@@ -195,38 +195,55 @@ public class InfoProvider {
             // 文件系统类型
             fileVo.setType(fs.getType() + "");//盘符文件系统类型
             FileSystemUsage usage = null;
-            usage = sigar.getFileSystemUsage(fs.getDirName());
-            switch (fs.getType()) {
-                case 0: // TYPE_UNKNOWN ：未知
-                    break;
-                case 1: // TYPE_NONE
-                    break;
-                case 2: // TYPE_LOCAL_DISK : 本地硬盘
-                    // 文件系统总大小
-                    long total = StringUtil.stringToLong(usage.getTotal() + "");
-                    total_number += total;
-                    fileVo.setTotal(total);//总大小 kb
-                    // 文件系统剩余大小
-                    fileVo.setFree(StringUtil.stringToLong(usage.getFree() + ""));//剩余大小 KB
-                    // 文件系统可用大小
-                    fileVo.setAvail(StringUtil.stringToLong(usage.getAvail() + ""));//可用大小 KB
-                    // 文件系统已经使用量
-                    fileVo.setUsed(StringUtil.stringToLong(usage.getUsed() + ""));//已经使用量 kb
-                    // 文件系统资源的利用率
-                    double usePercent = usage.getUsePercent() * 100D;
-                    fileVo.setUse_percent(+usePercent + "%");//资源的利用率
-                    break;
-                case 3:// TYPE_NETWORK ：网络
-                    break;
-                case 4:// TYPE_RAM_DISK ：闪存
-                    break;
-                case 5:// TYPE_CDROM ：光驱
-                    break;
-                case 6:// TYPE_SWAP ：页面交换
-                    break;
+            try {
+                usage = sigar.getFileSystemUsage(fs.getDirName());
+                switch (fs.getType()) {
+                    case 0: // TYPE_UNKNOWN ：未知
+                        break;
+                    case 1: // TYPE_NONE
+                        break;
+                    case 2: // TYPE_LOCAL_DISK : 本地硬盘
+                        // 文件系统总大小
+                        long total = StringUtil.stringToLong(usage.getTotal() + "");
+                        total_number += total;
+                        fileVo.setTotal(total);//总大小 kb
+                        // 文件系统剩余大小
+                        fileVo.setFree(StringUtil.stringToLong(usage.getFree() + ""));//剩余大小 KB
+                        // 文件系统可用大小
+                        fileVo.setAvail(StringUtil.stringToLong(usage.getAvail() + ""));//可用大小 KB
+                        // 文件系统已经使用量
+                        fileVo.setUsed(StringUtil.stringToLong(usage.getUsed() + ""));//已经使用量 kb
+                        // 文件系统资源的利用率
+                        double usePercent = usage.getUsePercent() * 100D;
+                        fileVo.setUse_percent(+usePercent + "%");//资源的利用率
+                        break;
+                    case 3:// TYPE_NETWORK ：网络
+                        break;
+                    case 4:// TYPE_RAM_DISK ：闪存
+                        break;
+                    case 5:// TYPE_CDROM ：光驱
+                        break;
+                    case 6:// TYPE_SWAP ：页面交换
+                        break;
+                }
+                fileVo.setDisk_reads(StringUtil.stringToLong(usage.getDiskReads() + ""));//读出
+                fileVo.setDisk_writes(StringUtil.stringToLong(usage.getDiskWrites() + ""));//写入
+            } catch (SigarException e) {
+                // 文件系统总大小
+                long total = 0;
+                total_number += 0;
+                fileVo.setTotal(total);//总大小 kb
+                // 文件系统剩余大小
+                fileVo.setFree(0);//剩余大小 KB
+                // 文件系统可用大小
+                fileVo.setAvail(0);//可用大小 KB
+                // 文件系统已经使用量
+                fileVo.setUsed(0);//已经使用量 kb
+                // 文件系统资源的利用率
+                fileVo.setUse_percent(0+ "%");//资源的利用率
+                fileVo.setDisk_reads(0);//读出
+                fileVo.setDisk_writes(0);//写入
             }
-            fileVo.setDisk_reads(StringUtil.stringToLong(usage.getDiskReads() + ""));//读出
-            fileVo.setDisk_writes(StringUtil.stringToLong(usage.getDiskWrites() + ""));//写入
             fileVos.add(fileVo);
         }
         filesVo.setTotal_number(total_number);
